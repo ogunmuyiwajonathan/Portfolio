@@ -87,7 +87,7 @@
 
     @media(max-width:720px){
       nav{justify-content:flex-start}
-      nav h1{order:3;margin-left:auto; margin-right: 5px;}
+      nav h1{order:3;margin-left:auto}
       nav ul{display:none;flex-direction:column;position:absolute;top:60px;left:20px;background:var(--nav);padding:1rem;border-radius:8px}
       nav ul.show{display:flex}
       .menu-toggle{display:block;order:1}
@@ -99,83 +99,6 @@
       padding: 10px; border-radius: 5px; border: 1px solid #ccc; background: var(--card);
     }
     .phone-group input {flex:1;}
-
-    /* ------- New styles for expandable/resizable message ------- */
-    .message-toolbar {
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-      font-size:.95rem;
-      color:#666;
-      margin-top:-6px;
-      margin-bottom:6px;
-    }
-    .message-hint { display:flex; align-items:center; gap:8px; font-size:.9rem; color:#cfcfcf; }
-    .expand-btn{
-      background:transparent;border:1px solid rgba(255,255,255,.08);padding:6px 10px;border-radius:8px;color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:8px;
-    }
-    textarea#message {
-      resize: vertical; /* allow visitor to drag vertically */
-      min-height:100px;
-      max-height:60vh;
-      overflow:auto;
-      position:relative;
-      padding-right:34px; /* space for handle */
-    }
-    /* small visible handle icon in bottom-right of textarea */
-    .resize-hint {
-      position:relative;
-    }
-    .resize-hint:after{
-      content: "\2195"; /* ↕ */
-      position:absolute;
-      right:10px;
-      bottom:10px;
-      font-size:14px;
-      color: #bbb;
-      pointer-events:none;
-    }
-
-    /* Overlay (fullscreen editor) */
-    .overlay {
-      position:fixed;
-      inset:0;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      background:rgba(0,0,0,.6);
-      z-index:10000;
-      padding:20px;
-    }
-    .overlay.open{display:flex}
-    .overlay-panel{
-      width:100%;
-      max-width:960px;
-      height:80vh;
-      background:var(--card);
-      border-radius:12px;
-      padding:14px;
-      display:flex;
-      flex-direction:column;
-      box-shadow:0 20px 60px rgba(0,0,0,.4);
-    }
-    .overlay-panel textarea{
-      flex:1;
-      width:100%;
-      padding:12px;
-      border-radius:8px;
-      border:1px solid #ddd;
-      resize:vertical;
-      min-height:100%;
-      font-size:1rem;
-      background:transparent;
-    }
-    .overlay-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:10px}
-    @media (max-width:600px){
-      .overlay-panel{height:86vh;padding:10px}
-    }
-    /* ---------------------------------------------------------- */
   </style>
 </head>
 <body>
@@ -271,7 +194,7 @@
   <!-- Contact -->
   <section id="contact">
     <h2>Contact Me</h2>
-    <form class="contact-form" id="contactForm" target="_blank" novalidate>
+    <form class="contact-form" id="contactForm" target="_blank">
       <input type="text" id="name" name="name" placeholder="Your Name" required>
       <div id="nameError" class="error"></div>
 
@@ -298,18 +221,7 @@
       </div>
       <div id="phoneError" class="error"></div>
 
-      <!-- Message textarea with toolbar (autosize + expand) -->
-      <div class="message-toolbar" aria-hidden="false">
-        <div class="message-hint"><i class="fa-solid fa-arrows-up-down-left-right"></i> Drag the corner to resize, or</div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <div id="charCount" style="color:#999;font-size:.9rem">0 chars</div>
-          <button type="button" id="expandBtn" class="expand-btn" title="Expand message editor"><i class="fa-solid fa-expand"></i> Expand</button>
-        </div>
-      </div>
-      <div class="resize-hint">
-        <textarea name="text" id="message" rows="5" placeholder="Your Message" required></textarea>
-      </div>
-
+      <textarea name="text" id="message" rows="4" placeholder="Your Message" required></textarea>
       <button type="submit">Send Message on WhatsApp</button>
     </form>
 
@@ -333,28 +245,17 @@
 
   <button id="topBtn"><i class="fa-solid fa-angle-up"></i></button>
 
-  <!-- Fullscreen overlay editor -->
-  <div id="overlay" class="overlay" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="overlay-panel" role="document">
-      <textarea id="overlayMessage" aria-label="Expanded message editor"></textarea>
-      <div class="overlay-actions">
-        <button id="overlayClose" class="btn"><i class="fa-solid fa-xmark"></i> Close</button>
-        <button id="overlaySave" class="btn"><i class="fa-solid fa-check"></i> Save</button>
-      </div>
-    </div>
-  </div>
-
   <script>
-    // Smooth scroll
     var scroll = new SmoothScroll('a[href*="#"]', { speed: 600, speedAsDuration: true });
 
-    // Mobile nav toggle
     document.getElementById("menuToggle").addEventListener("click", ()=>{
       document.getElementById("navLinks").classList.toggle("show");
     });
 
     (function typing(){
       const el = document.getElementById('typingText');
+
+      // Intro phrases (these appear first)
       const introPlain = [
         "I am a Web Developer",
         "A Front end developer",
@@ -367,6 +268,8 @@
         "A Backend developer <i class='fa-solid fa-server'></i>",
         "I specialize in:"
       ];
+
+      // Skill phrases (follow the intro)
       const skillPlain = [
         "UI/UX",
         "HTML",
@@ -395,8 +298,11 @@
         "Python <i class='fa-brands fa-python'></i>",
         "Advanced Software Engineering <i class='fa-solid fa-laptop-code'></i>"
       ];
+
+      // Combine intro + skills
       const plain = introPlain.concat(skillPlain);
       const html = introHTML.concat(skillHTML);
+
       let i = 0, j = 0;
       function typeChar() {
         if (j < plain[i].length) {
@@ -404,8 +310,10 @@
           j++;
           setTimeout(typeChar, 80);
         } else {
+          // after typing completes, replace with html (icons) for visual
           setTimeout(()=> {
             el.innerHTML = html[i];
+            // pause longer for intro lines
             const isIntro = i < introPlain.length;
             const pause = isIntro ? 1200 : 1600;
             setTimeout(()=> {
@@ -438,93 +346,7 @@
       topBtn.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
     })();
 
-    // ---------- Message autosize, charcount, expand overlay ----------
-    const message = document.getElementById('message');
-    const overlay = document.getElementById('overlay');
-    const overlayMessage = document.getElementById('overlayMessage');
-    const expandBtn = document.getElementById('expandBtn');
-    const overlayClose = document.getElementById('overlayClose');
-    const overlaySave = document.getElementById('overlaySave');
-    const charCount = document.getElementById('charCount');
-
-    function autosize(el) {
-      el.style.height = 'auto';
-      // add 2px so scrollHeight doesn't clip in some browsers
-      el.style.height = (el.scrollHeight + 2) + 'px';
-    }
-
-    function updateCharCount(text) {
-      charCount.textContent = text.length + ' chars';
-    }
-
-    // initialize
-    autosize(message);
-    updateCharCount(message.value);
-
-    // when user types in the small textarea, autosize + update overlay content on next open
-    message.addEventListener('input', (e) => {
-      autosize(message);
-      updateCharCount(message.value);
-      // keep overlay in sync if open
-      if (overlay.classList.contains('open')) {
-        overlayMessage.value = message.value;
-        autosize(overlayMessage);
-      }
-    });
-
-    // Expand button opens overlay editor
-    expandBtn.addEventListener('click', () => {
-      overlay.classList.add('open');
-      overlay.setAttribute('aria-hidden', 'false');
-      overlayMessage.value = message.value;
-      autosize(overlayMessage);
-      overlayMessage.focus();
-      // move caret to end
-      overlayMessage.selectionStart = overlayMessage.selectionEnd = overlayMessage.value.length;
-    });
-
-    // Close overlay without saving (just close)
-    overlayClose.addEventListener('click', () => {
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden', 'true');
-      message.focus();
-    });
-
-    // Save overlay content back to form textarea
-    overlaySave.addEventListener('click', () => {
-      message.value = overlayMessage.value;
-      autosize(message);
-      updateCharCount(message.value);
-      overlay.classList.remove('open');
-      overlay.setAttribute('aria-hidden', 'true');
-      message.focus();
-    });
-
-    // Allow keyboard shortcuts in overlay: Esc to close without saving, Ctrl+Enter to save
-    overlay.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-        message.focus();
-      }
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-        overlaySave.click();
-      }
-    });
-
-    // autosize overlay textarea while typing
-    overlayMessage.addEventListener('input', () => autosize(overlayMessage));
-
-    // Prevent overlay click from closing (only buttons close it)
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        // clicking outside also closes but does not save
-        overlay.classList.remove('open');
-        overlay.setAttribute('aria-hidden', 'true');
-      }
-    });
-
-    // ---------- Form submit (WhatsApp) with validation ----------
+    // WhatsApp form handler with inline validation and name rule (min 3 words)
     document.getElementById("contactForm").addEventListener("submit", function(e) {
       e.preventDefault();
 
@@ -537,7 +359,7 @@
       const email = document.getElementById("email").value.trim();
       let phone = document.getElementById("phone").value.trim();
       const countryCode = document.getElementById("countryCode").value;
-      const messageText = document.getElementById("message").value.trim();
+      const message = document.getElementById("message").value.trim();
 
       let valid = true;
 
@@ -565,7 +387,7 @@
       if (!valid) return;
 
       const fullPhone = countryCode + phone; // combined international number
-      const fullMessage = `Name: ${name}\nEmail: ${email}\nPhone: ${fullPhone}\nMessage: ${messageText}`;
+      const fullMessage = `Name: ${name}\nEmail: ${email}\nPhone: ${fullPhone}\nMessage: ${message}`;
       const encodedMessage = encodeURIComponent(fullMessage);
 
       // Your fixed business WhatsApp number (receiver)
@@ -574,9 +396,14 @@
       window.open(waUrl, "_blank");
     });
 
-    // Keep character count in sync on page load (useful if value prefilled)
-    document.addEventListener('DOMContentLoaded', () => {
-      updateCharCount(message.value || '');
+    // Project filter
+    document.querySelectorAll(".projects-controls .btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const filter=btn.getAttribute("data-filter");
+        document.querySelectorAll("#projectsGrid .project").forEach(card=>{
+          card.style.display=(filter==="all"||card.getAttribute("data-type")===filter)?"block":"none";
+        });
+      });
     });
   </script>
 </body>
